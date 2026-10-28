@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <title>TermCaps social preview</title>
+  <!-- Rendered to social-preview.png at 1280x640 for GitHub and link previews. -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Martian+Mono:wdth,wght@75..112.5,400..700&family=Onest:wght@400..800&display=swap">
+  <link rel="stylesheet" href="../styles.css">
+  <style>
+    html, body { width: 1280px; height: 640px; margin: 0; overflow: hidden; }
+    body { display: grid; place-items: center; background: var(--bg); }
+    .card { display: flex; flex-direction: column; align-items: center; }
+
+    .title {
+      display: flex;
+      gap: 12px;
+      padding: 22px 24px 16px;
+      border-radius: 30px;
+      background: var(--plate);
+      box-shadow: inset 0 2px 8px var(--plate-shadow), inset 0 0 0 1px var(--line);
+    }
+    .title .lc { --s: 102px; --d0: 9px; color: var(--ink); }
+
+    .tagline { margin: 38px 0 44px; font: 650 40px/1.1 var(--sans); letter-spacing: -0.02em; color: var(--ink-2); }
+
+    .tools { display: flex; gap: 64px; }
+    .tool { display: flex; flex-direction: column; align-items: center; gap: 14px; }
+    .tool .keys { display: flex; gap: 7px; }
+    .tool .cap {
+      --h: 66px;
+      --d0: 6px;
+      min-width: 66px;
+      border-radius: 13px;
+      font-size: 28px;
+      background-color: var(--c);
+      color: var(--c-on);
+      --cap-side: var(--c-side);
+      --sheen: rgba(255, 255, 255, 0.28);
+    }
+    .tool .cap.two { min-width: 112px; padding: 0 11px 11px; }
+    .tool .cap.two b { top: 9px; right: 11px; font-size: 25px; }
+    .tool .cap.two i { font-size: 16px; }
+    .tool .name { font: 700 24px/1 var(--sans); color: var(--c-ink); }
+    .nano { --c: var(--nano); --c-on: var(--nano-on); --c-side: var(--nano-side); --c-ink: var(--nano-ink); }
+    .vi { --c: var(--vi); --c-on: var(--vi-on); --c-side: var(--vi-side); --c-ink: var(--vi-ink); }
+    .ghostty { --c: var(--ghostty); --c-on: var(--ghostty-on); --c-side: var(--ghostty-side); --c-ink: var(--ghostty-ink); }
+
+    .url { margin: 40px 0 0; font: 600 24px/1 var(--sans); color: var(--ink-3); letter-spacing: 0.01em; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="title" aria-label="termcaps">
+      <span class="lc">t</span><span class="lc">e</span><span class="lc">r</span><span class="lc">m</span><span class="lc">c</span><span class="lc">a</span><span class="lc">p</span><span class="lc">s</span>
+    </div>
+
+    <p class="tagline">Terminal shortcuts, drawn as keycaps.</p>
+
+    <div class="tools">
+      <div class="tool nano">
+        <div class="keys"><span class="cap two"><b>⌃</b><i>control</i></span><span class="cap">X</span></div>
+        <span class="name">nano</span>
+      </div>
+      <div class="tool vi">
+        <div class="keys"><span class="cap">:</span><span class="cap">w</span><span class="cap">q</span></div>
+        <span class="name">vi</span>
+      </div>
+      <div class="tool ghostty">
+        <div class="keys"><span class="cap two"><b>⌘</b><i>command</i></span><span class="cap">D</span></div>
+        <span class="name">ghostty</span>
+      </div>
+    </div>
+
+    <p class="url">termcaps.com</p>
+  </div>
+</body>
+</html>
