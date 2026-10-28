@@ -318,7 +318,23 @@ button.cap.cmd:hover, .cap.cmd.copied { --d: 1px; }
 }
 .icon-btn:hover { border-color: var(--ink-3); }
 .icon-btn svg { width: 1.25rem; height: 1.25rem; fill: none; stroke: var(--ink); stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
-.icon-btn.gh svg { fill: var(--ink); stroke: none; }
+.gh-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  height: 2.8rem;
+  padding: 0 1rem 0 0.9rem;
+  border: 1px solid var(--line);
+  border-radius: 0.9rem;
+  background: var(--surface);
+  color: var(--ink);
+  font-weight: 650;
+  font-size: 0.98rem;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.gh-link:hover { border-color: var(--ink-3); }
+.gh-link svg { width: 1.2rem; height: 1.2rem; fill: var(--ink); }
 
 /* ============ Hero: tool names in giant keycaps ============ */
 main { max-width: var(--max); margin: 0 auto; padding: 0 var(--gut); }
@@ -716,7 +732,8 @@ footer a:hover { color: var(--ink); }
   .brand-name { display: none; }
   .past-hero .brand { display: none; }
   body:not(.past-hero) .mini { display: none; }
-  .icon-btn.gh { display: none; }
+  .gh-link { width: 2.8rem; padding: 0; justify-content: center; flex: none; }
+  .gh-link span { display: none; }
   .bar-in { gap: 0.6rem; }
   .bar-right { flex: 1; justify-content: flex-end; }
   .search { flex: 1; }
