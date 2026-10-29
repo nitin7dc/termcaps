@@ -2,12 +2,9 @@
 
 Shortcuts for nano, vi and Ghostty, drawn as keycaps you can see.
 
-**[termcaps.com](https://termcaps.com)**
+**Try it at [termcaps.com](https://termcaps.com)**
 
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="docs/screenshot-dark.png">
-  <img alt="TermCaps showing the nano sheet: the tool names as large keycaps, an animated nano demo, and shortcuts drawn as keys" src="docs/screenshot-light.png">
-</picture>
+<a href="https://termcaps.com"><img alt="TermCaps in action: switching between nano, vi and Ghostty, each with an animated terminal demo, then holding ⌘ to light up matching shortcuts and searching for split" src="docs/demo.gif" width="100%"></a>
 
 ## What's inside
 
@@ -64,7 +61,15 @@ Key format for `k`:
 
 Named keys: `esc`, `enter`, `tab`, `bksp`, `space`, `left`, `right`, `up`, `down`, `arrows`, `home`, `end`, `pgup`, `pgdn`.
 
-Pull requests are welcome. Please check new shortcuts against the real tool before adding them.
+Pull requests are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) for how to add a shortcut or a whole new tool.
+
+## Coming next
+
+- tmux
+- Emacs
+- Kitty and WezTerm
+
+Want one of these, or something else? [Request a tool](https://github.com/nitin7dc/termcaps/issues/new/choose), or build it: a new tool needs only a `data.js` entry.
 
 ## Project layout
 
@@ -76,6 +81,8 @@ Pull requests are welcome. Please check new shortcuts against the real tool befo
 | `keys.js` | Turns key specs into keycaps |
 | `demos.js` | The animated terminal demos |
 | `app.js` | Tabs, search, modifier highlighting, copy, theme |
+
+If TermCaps saved you a trip to a search engine, a ⭐ helps other people find it.
 
 ## License
 

@@ -1,0 +1,25 @@
+name: Request a new tool
+description: Ask for a new sheet, like tmux, Emacs or Kitty
+body:
+  - type: input
+    id: tool
+    attributes:
+      label: Tool
+      placeholder: "tmux"
+    validations:
+      required: true
+  - type: input
+    id: docs
+    attributes:
+      label: Link to its official shortcut docs
+  - type: textarea
+    id: favorites
+    attributes:
+      label: Which shortcuts do you use most?
+      description: These help decide what goes in the demo.
+  - type: checkboxes
+    id: build
+    attributes:
+      label: Want to build it?
+      options:
+        - label: I'd like to add this sheet myself

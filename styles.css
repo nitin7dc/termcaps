@@ -335,6 +335,7 @@ button.cap.cmd:hover, .cap.cmd.copied { --d: 1px; }
 }
 .gh-link:hover { border-color: var(--ink-3); }
 .gh-link svg { width: 1.2rem; height: 1.2rem; fill: var(--ink); }
+.gh-stars { margin-left: 0.15rem; padding-left: 0.6rem; border-left: 1px solid var(--line); color: var(--ink-2); font-variant-numeric: tabular-nums; }
 
 /* ============ Hero: tool names in giant keycaps ============ */
 main { max-width: var(--max); margin: 0 auto; padding: 0 var(--gut); }
@@ -408,6 +409,7 @@ main { max-width: var(--max); margin: 0 auto; padding: 0 var(--gut); }
   align-items: start;
   padding: clamp(2rem, 4vw, 3.25rem) 0 clamp(2rem, 4vw, 3rem);
 }
+.intro.no-demo { grid-template-columns: minmax(0, 46rem); }
 .lede {
   margin: 0 0 1.6rem;
   font-size: clamp(1.9rem, 3.4vw, 2.85rem);

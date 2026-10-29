@@ -56,7 +56,7 @@
   // ---------- Panels
   const HINTS = `<p class="hints">
       <span><span class="cap sm">/</span> search</span>
-      <span><span class="cap sm">1</span><span class="cap sm">2</span><span class="cap sm">3</span> switch tool</span>
+      <span>${SHEETS.map((s, i) => `<span class="cap sm">${i + 1}</span>`).join('')} switch tool</span>
       <span>Hold <span class="cap sm">⌃</span><span class="cap sm">⌥</span><span class="cap sm">⌘</span> or <span class="cap sm">⇧</span> to light up the shortcuts that use it</span>
     </p>`;
 
@@ -112,20 +112,20 @@
     p.setAttribute('aria-labelledby', `tab-${sh.id}`);
     p.innerHTML = `
       <h2 class="print-title">${sh.name}</h2>
-      <div class="intro">
+      <div class="intro${DEMOS[sh.id] ? '' : ' no-demo'}">
         <div class="intro-text">
           <p class="lede">${sh.lede}</p>
           ${legendHTML(sh)}
           ${sh.tips.map(tipHTML).join('')}
         </div>
-        <figure class="demo">
+        ${DEMOS[sh.id] ? `<figure class="demo">
           <div class="screen" aria-hidden="true"></div>
           <figcaption class="hud">
             <div class="hud-keys"></div>
             <p class="hud-say" aria-live="off"></p>
             <div class="hud-ctrl"><div class="dots"></div><button type="button" class="play"></button></div>
           </figcaption>
-        </figure>
+        </figure>` : ''}
       </div>
       <nav class="jump" aria-label="${sh.name} sections">${sh.sections.map((s, i) => `<a href="#${sh.id}-${i}" data-jump="${sh.id}-${i}">${s.title}</a>`).join('')}</nav>
       ${HINTS}
@@ -135,7 +135,7 @@
 
     panels[sh.id] = p;
     rows[sh.id] = $$('.row', p).map((el, i) => ({ ...meta[i], el, dt: $('.dt', el) }));
-    players[sh.id] = new DemoPlayer($('.demo', p), DEMOS[sh.id], { autoplay: !reduced });
+    if (DEMOS[sh.id]) players[sh.id] = new DemoPlayer($('.demo', p), DEMOS[sh.id], { autoplay: !reduced });
   }
   SHEETS.forEach(buildPanel);
 
@@ -162,8 +162,10 @@
       const t = $(`#tab-${sh.id}`);
       t.setAttribute('aria-selected', String(on));
       t.tabIndex = on ? 0 : -1;
-      players[sh.id].active = on;
-      players[sh.id].sync();
+      if (players[sh.id]) {
+        players[sh.id].active = on;
+        players[sh.id].sync();
+      }
     });
     $$('#mini button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.tool === id)));
     $('#q').placeholder = narrow.matches ? 'Search' : `Search ${byId[id].name} shortcuts`;
@@ -431,6 +433,30 @@
     const id = location.hash.slice(1);
     if (byId[id]) setTool(id, { animate: true });
   });
+
+  // ---------- Star count on the GitHub button (only once there are enough to show)
+  (async () => {
+    const link = $('.gh-link');
+    if (!link) return;
+    let n = null;
+    try {
+      const c = JSON.parse(store.get('ks-stars') || 'null');
+      if (c && Date.now() - c.t < 3600e3) n = c.n;
+    } catch (e) { /* bad cache */ }
+    if (n === null) {
+      try {
+        const r = await fetch('https://api.github.com/repos/nitin7dc/termcaps');
+        if (r.ok) {
+          n = (await r.json()).stargazers_count;
+          store.set('ks-stars', JSON.stringify({ n, t: Date.now() }));
+        }
+      } catch (e) { /* offline or rate limited */ }
+    }
+    if (typeof n !== 'number' || n < 10) return;
+    const label = n >= 1000 ? `${(n / 1000).toFixed(1).replace(/\.0$/, '')}k` : String(n);
+    link.insertAdjacentHTML('beforeend', `<span class="gh-stars">★ ${label}</span>`);
+    link.setAttribute('aria-label', `TermCaps on GitHub, ${n} stars`);
+  })();
 
   // ---------- Start
   const fromHash = location.hash.slice(1).split('-')[0];

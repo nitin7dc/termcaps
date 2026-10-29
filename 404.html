@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en" data-tool="ghostty">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Page not found | TermCaps</title>
+  <meta name="robots" content="noindex">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Martian+Mono:wdth,wght@75..112.5,400..700&family=Onest:wght@400..800&display=swap">
+  <link rel="stylesheet" href="/styles.css">
+  <script>
+    try { var t = localStorage.getItem('ks-theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
+  </script>
+  <style>
+    body { min-height: 100vh; display: grid; place-items: center; padding: 24px 16px; text-align: center; }
+    .nf .plate { margin: 0 auto 2rem; }
+    .nf h1 { margin: 0 0 0.6rem; font-size: clamp(1.8rem, 5vw, 2.6rem); font-weight: 750; letter-spacing: -0.02em; }
+    .nf p { margin: 0 0 1.6rem; color: var(--ink-2); font-size: 1.15rem; }
+    .nf .acts { justify-content: center; }
+    .nf .btn { text-decoration: none; color: var(--ink); }
+    .nf .btn.primary { color: var(--accent-on); }
+  </style>
+</head>
+<body>
+  <main class="nf">
+    <div class="plate"><span class="word typing" aria-selected="true"><span class="lc" style="--i:0">4</span><span class="lc" style="--i:1">0</span><span class="lc" style="--i:2">4</span></span></div>
+    <h1>This page doesn’t exist.</h1>
+    <p>Press <span class="cap sm">esc</span> to go back to TermCaps, or open a sheet.</p>
+    <div class="acts">
+      <a class="btn primary" href="/">Go to TermCaps</a>
+      <a class="btn" href="/#nano">nano</a>
+      <a class="btn" href="/#vi">vi</a>
+      <a class="btn" href="/#ghostty">ghostty</a>
+    </div>
+  </main>
+  <script>
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') location.href = '/'; });
+  </script>
+</body>
+</html>

@@ -1,0 +1,39 @@
+name: Add or fix a shortcut
+description: Suggest a missing shortcut, or report one that's wrong
+body:
+  - type: dropdown
+    id: tool
+    attributes:
+      label: Tool
+      options:
+        - nano
+        - vi / Vim
+        - Ghostty
+    validations:
+      required: true
+  - type: input
+    id: keys
+    attributes:
+      label: Keys
+      placeholder: "ctrl+o, :wq, cmd+shift+d"
+    validations:
+      required: true
+  - type: input
+    id: does
+    attributes:
+      label: What it does
+      placeholder: "Split down"
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Where you checked it
+      description: Shortcuts change between versions, so this helps us keep the sheet accurate.
+      placeholder: "Ghostty 1.4 on macOS"
+    validations:
+      required: true
+  - type: textarea
+    id: notes
+    attributes:
+      label: Anything else?
