@@ -9,6 +9,7 @@ body:
         - nano
         - vi / Vim
         - Ghostty
+        - tmux
     validations:
       required: true
   - type: input

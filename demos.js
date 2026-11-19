@@ -172,7 +172,50 @@
     },
   };
 
-  window.DEMOS = { nano, vi, ghostty };
+  // ---- tmux (reuses the Ghostty panes and layout tree)
+  const win = (s) => s.wins[s.active];
+  const pad2 = (n) => String(n).padStart(2, '0');
+  // tmux's default status-right clock: 09:41 08-Nov-26
+  function clock() {
+    const d = new Date();
+    return `${pad2(d.getHours())}:${pad2(d.getMinutes())} ${pad2(d.getDate())}-${d.toLocaleString('en', { month: 'short' })}-${String(d.getFullYear()).slice(2)}`;
+  }
+
+  const tmux = {
+    init: () => ({ wins: [{ tree: L('A'), focus: 'A', zoom: false }], active: 0, last: -1, detached: false, typed: '' }),
+    script() {
+      return new Script()
+        .key('ctrl+b %', 'Split right', (s) => { const w = win(s); w.tree = Sp('row', L('A'), L('B')); w.focus = 'B'; s.fx.fresh = 'B'; }, 1700)
+        .key('ctrl+b "', 'Split down', (s) => { const w = win(s); w.tree = Sp('row', L('A'), Sp('col', L('B'), L('C'))); w.focus = 'C'; s.fx.fresh = 'C'; }, 1700)
+        .key('ctrl+b left', 'Go to the pane on the left', (s) => { win(s).focus = 'A'; s.fx.gain = 'A'; }, 1600)
+        .key('ctrl+b z', 'Zoom it to fill the window', (s) => { win(s).zoom = true; s.fx.fresh = 'A'; }, 1700)
+        .key('ctrl+b z', 'Press again to put it back', (s) => { win(s).zoom = false; }, 1600)
+        .key('ctrl+b c', 'Open a new window', (s) => { s.wins.push({ tree: L('D'), focus: 'D', zoom: false }); s.last = 0; s.active = 1; s.fx.fresh = 'D'; }, 1700)
+        .key('ctrl+b 0', 'Back to window 0', (s) => { s.last = 1; s.active = 0; }, 1600)
+        .key('ctrl+b d', 'Detach. It all keeps running', (s) => { s.detached = true; }, 2000)
+        .say('Come back any time', 500)
+        .type('tmux a', (s, ch) => { s.typed += ch; }, 120)
+        .key('enter', 'Right where you left off', (s) => { s.detached = false; s.typed = ''; s.fx.back = true; }, 2800).steps;
+    },
+    render(s) {
+      if (s.detached) {
+        return `<div class="sh">
+          <div><span class="sh-p">~ $</span> tmux new -s work</div>
+          <div>[detached (from session work)]</div>
+          <div><span class="sh-p">~ $</span> ${esc(s.typed)}<span class="cur"> </span></div>
+        </div>`;
+      }
+      const w = win(s);
+      const body = w.zoom ? pane(w.focus, true, s) : node(w.tree, w.focus, s);
+      // Window flags as tmux shows them: * current, - last used, Z zoomed
+      const list = s.wins
+        .map((x, i) => `<span>${i}:zsh${i === s.active ? '*' : i === s.last ? '-' : ''}${i === s.active && x.zoom ? 'Z' : ''}</span>`)
+        .join('');
+      return `<div class="tx${s.fx.back ? ' back' : ''}"><div class="tx-body">${body}</div><div class="tx-status"><span>[work]</span>${list}<span class="tx-right">"mac" ${clock()}</span></div></div>`;
+    },
+  };
+
+  window.DEMOS = { nano, vi, ghostty, tmux };
 
   // ---- Player
   const ICON_PAUSE = '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1.2"/><rect x="14" y="5" width="4" height="14" rx="1.2"/></svg>';

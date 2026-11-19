@@ -27,6 +27,9 @@
     pgdn: { t: 'page down', cls: 'word' },
     backquote: { t: '`' },
     '1-8': { t: '1–8' },
+    '0-9': { t: '0–9' },
+    // tmux's prefix key. The sheet's legend says which keys it stands for.
+    prefix: { t: 'prefix', cls: 'word pfx' },
   };
 
   // Symbols that need Shift on a US layout, mapped to the physical key.
@@ -65,10 +68,12 @@
     return c.mods.length && c.key ? `<span class="chord">${caps}</span>` : caps;
   }
 
+  // {name} is a placeholder, but #{name} is a tmux format and stays as typed.
+  const PH = /(?<!#)\{(\w+)\}/g;
   function cmdHTML(text, isStatic) {
-    const body = esc(text).replace(/\{(\w+)\}/g, '<em>$1</em>');
+    const body = esc(text).replace(PH, '<em>$1</em>');
     if (isStatic) return `<span class="cap cmd">${body}</span>`;
-    const copy = text.replace(/\{(\w+)\}/g, '$1');
+    const copy = text.replace(PH, '$1');
     return `<button type="button" class="cap cmd" data-copy="${esc(copy)}" title="Copy">${body}</button>`;
   }
 
@@ -124,6 +129,18 @@
     return out;
   }
 
+  // The key pressed right after the prefix, for sheets like tmux where most shortcuts start with it.
+  function afterPrefix(spec) {
+    const out = [];
+    list(spec).forEach((alt) =>
+      parts(alt).forEach((p) => {
+        const [first, next] = p.seq || [];
+        if (first && first.key === 'prefix' && next && !next.ph) out.push({ mods: new Set(next.mods), key: next.key });
+      })
+    );
+    return out;
+  }
+
   // Plain text used by search: "ctrl+o control", "d d dd", ":wq".
   function text(spec) {
     return list(spec)
@@ -141,5 +158,5 @@
       .join(' ');
   }
 
-  window.Keys = { render, native, chords, text, esc };
+  window.Keys = { render, native, chords, afterPrefix, text, esc };
 })();

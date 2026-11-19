@@ -37,6 +37,8 @@
   --nano: #eba53c; --nano-side: #b87516; --nano-on: #2b1a00; --nano-ink: #8a5700; --nano-soft: rgba(235, 165, 60, 0.17);
   --vi: #34a464; --vi-side: #1f7444; --vi-on: #062616; --vi-ink: #1b7343; --vi-soft: rgba(52, 164, 100, 0.15);
   --ghostty: #5f67f6; --ghostty-side: #3a40c2; --ghostty-on: #ffffff; --ghostty-ink: #3f47d4; --ghostty-soft: rgba(95, 103, 246, 0.14);
+  --tmux: #e34d84; --tmux-side: #a8285a; --tmux-on: #2b0716; --tmux-ink: #b02a5c; --tmux-soft: rgba(227, 77, 132, 0.14);
+  --tmux-green: #4cba5a; /* tmux's default status bar, used in the demo */
 
   color-scheme: light;
 }
@@ -64,6 +66,7 @@
     --nano-ink: #f5c065; --nano-soft: rgba(235, 165, 60, 0.14);
     --vi-ink: #66d396; --vi-soft: rgba(52, 164, 100, 0.14);
     --ghostty-ink: #a5aaff; --ghostty-soft: rgba(95, 103, 246, 0.18);
+    --tmux-ink: #ff8fb6; --tmux-soft: rgba(227, 77, 132, 0.18);
     color-scheme: dark;
   }
 }
@@ -89,6 +92,7 @@
   --nano-ink: #f5c065; --nano-soft: rgba(235, 165, 60, 0.14);
   --vi-ink: #66d396; --vi-soft: rgba(52, 164, 100, 0.14);
   --ghostty-ink: #a5aaff; --ghostty-soft: rgba(95, 103, 246, 0.18);
+  --tmux-ink: #ff8fb6; --tmux-soft: rgba(227, 77, 132, 0.18);
   color-scheme: dark;
 }
 
@@ -101,6 +105,9 @@
 }
 [data-tool='ghostty'] {
   --accent: var(--ghostty); --accent-side: var(--ghostty-side); --accent-on: var(--ghostty-on); --accent-ink: var(--ghostty-ink); --accent-soft: var(--ghostty-soft);
+}
+[data-tool='tmux'] {
+  --accent: var(--tmux); --accent-side: var(--tmux-side); --accent-on: var(--tmux-on); --accent-ink: var(--tmux-ink); --accent-soft: var(--tmux-soft);
 }
 
 /* ============ Base ============ */
@@ -179,6 +186,9 @@ mark { background: var(--accent-soft); color: inherit; border-radius: 0.2em; box
 }
 .cap.two i { font-style: normal; font-size: 0.74rem; font-weight: 600; line-height: 1; }
 .cap.word { font: 600 0.92rem/1 var(--sans); padding: 0 0.75rem; }
+/* tmux's prefix (ctrl+b), drawn as one labelled key */
+.cap.pfx { color: var(--accent-ink); }
+.armed .cap.pfx { --d: 1.5px; background-color: var(--accent); color: var(--accent-on); --cap-side: var(--accent-side); }
 .cap.wide { min-width: 5.2rem; }
 .cap.arrow { font-family: var(--sans); font-size: 1.1rem; letter-spacing: 0.08em; }
 .cap.ph {
@@ -421,6 +431,7 @@ main { max-width: var(--max); margin: 0 auto; padding: 0 var(--gut); }
 .legend { list-style: none; margin: 0 0 1.6rem; padding: 0; display: grid; gap: 0.75rem; }
 .legend li { display: flex; align-items: center; gap: 0.9rem; font-size: 1.08rem; color: var(--ink-2); }
 .legend .cap { min-width: 3rem; margin-bottom: 4px; }
+.legend li > .seq { flex: none; flex-wrap: nowrap; }
 .legend.modes li { align-items: baseline; }
 .mode {
   flex: none;
@@ -507,7 +518,7 @@ main { max-width: var(--max); margin: 0 auto; padding: 0 var(--gut); }
 .cur.inv { background: var(--term); }
 @keyframes blink { 50% { background: transparent; color: inherit; box-shadow: none; } }
 
-.nano, .vi, .gt { display: flex; flex-direction: column; }
+.nano, .vi, .gt, .tx { display: flex; flex-direction: column; }
 .n-head, .n-prompt { display: flex; justify-content: space-between; padding: 0 0.9rem; background: var(--term-ink); color: var(--term); }
 .n-head span { flex: 1; }
 .n-head span:nth-child(2) { text-align: center; }
@@ -566,6 +577,13 @@ main { max-width: var(--max); margin: 0 auto; padding: 0 var(--gut); }
 .pane.gain { animation: gain 0.35s ease-out; }
 @keyframes grow { from { opacity: 0; transform: scale(0.96); } }
 @keyframes gain { from { opacity: 0.55; } }
+.tx.back { animation: grow 0.38s cubic-bezier(0.2, 0.8, 0.2, 1); }
+.tx-body { flex: 1; display: flex; min-height: 0; overflow: hidden; }
+.tx .split { gap: 1px; background: #3a4052; }
+.tx .pane { opacity: 0.62; }
+.tx .pane.on { opacity: 1; outline: 1px solid var(--tmux-green); }
+.tx-status { display: flex; gap: 1ch; padding: 0 0.6rem; background: var(--tmux-green); color: #0b0d12; white-space: pre; overflow: hidden; }
+.tx-right { flex: 1 1 0; min-width: 0; overflow: hidden; text-align: right; }
 .p-dir { color: #7dcfff; }
 .p-ar { color: #a5aaff; }
 .p-out { color: var(--term-dim); }
@@ -582,6 +600,8 @@ main { max-width: var(--max); margin: 0 auto; padding: 0 var(--gut); }
 .hud-keys:empty { display: none; }
 .hud-keys.go .cap { animation: hudtap 0.36s cubic-bezier(0.3, 0.7, 0.4, 1) calc(var(--i) * 110ms) both; }
 .hud-keys.go .cap.mod { animation: hudhold 0.3s ease-out both; }
+.hud-keys.go .chord:not(:last-child) .cap { animation: hudtap 0.36s cubic-bezier(0.3, 0.7, 0.4, 1) both; }
+.hud-keys.go .chord:not(:last-child) ~ .cap, .hud-keys.go .chord:not(:last-child) ~ .chord .cap { animation-delay: calc(var(--i) * 110ms + 260ms); }
 @keyframes hudtap { 0% { --d: var(--d0); } 35% { --d: 1px; background-color: var(--accent); color: var(--accent-on); } 100% { --d: var(--d0); } }
 @keyframes hudhold { to { --d: 1.5px; background-color: var(--accent); color: var(--accent-on); } }
 .hud-say { margin: 0; font-size: 1.12rem; font-weight: 650; line-height: 1.25; }
@@ -740,7 +760,11 @@ footer a:hover { color: var(--ink); }
   .bar-right { flex: 1; justify-content: flex-end; }
   .search { flex: 1; }
   .search input { width: 100%; }
-  .past-hero .search { flex: 0 1 11rem; }
+  .past-hero .search { flex: 1 1 2.8rem; min-width: 2.8rem; }
+  .past-hero .search .cap { display: none; }
+  .past-hero .search input { min-width: 0; padding-right: 0.5rem; }
+  .past-hero .gh-link { display: none; }
+  .past-hero .bar-in:has(.search input:focus, .search input:not(:placeholder-shown)) .mini { display: none; }
 }
 @media (max-width: 600px) {
   body { font-size: 1.06rem; }
@@ -757,7 +781,8 @@ footer a:hover { color: var(--ink); }
   .n-help span:nth-child(5n + 4), .n-help span:nth-child(5n) { display: none; }
   .hud { grid-template-columns: 1fr auto; }
   .hud-keys { grid-column: 1 / -1; }
-  .mini button { padding: 0.4rem 0.6rem; font-size: 0.92rem; }
+  .mini button { padding: 0.4rem 0.5rem; font-size: 0.92rem; }
+  .tx-right { display: none; }
 }
 @media (hover: none) {
   .hints, .search .cap { display: none; }
@@ -773,7 +798,7 @@ footer a:hover { color: var(--ink); }
   }
 }
 
-/* ============ Print: all three sheets ============ */
+/* ============ Print: every sheet ============ */
 @media print {
   :root { --bg: #fff; --surface: #fff; --ink: #000; --ink-2: #333; --ink-3: #555; --line: #ccc; color-scheme: light; }
   .bar, .hero, .intro, .jump, .hints, .empty, .toast, footer { display: none !important; }

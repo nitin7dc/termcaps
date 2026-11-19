@@ -4,7 +4,7 @@ Thanks for helping. The most useful contributions are:
 
 - **Fixing a shortcut** that's wrong or out of date
 - **Adding a shortcut** people actually use
-- **Adding a new tool**, like tmux, Emacs, Kitty or WezTerm
+- **Adding a new tool**, like Emacs, Kitty or WezTerm
 
 There's no build step. Edit the files, open `index.html` in a browser, and you'll see your change.
 
@@ -38,18 +38,18 @@ The README has the [full key format](README.md#add-or-fix-a-shortcut). A few wri
 
    ```js
    {
-     id: 'tmux',               // used in the URL: termcaps.com/#tmux
-     name: 'tmux',             // spelled out in keycaps at the top of the page
+     id: 'kitty',              // used in the URL: termcaps.com/#kitty
+     name: 'kitty',            // spelled out in keycaps at the top of the page
      lede: 'One short sentence about the tool.',
      legend: [],               // optional key notation, see nano's entry
      tips: [],                 // optional tip boxes
      sections: [
-       { title: 'Sessions', rows: [ /* ... */ ] },
+       { title: 'Tabs & windows', rows: [ /* ... */ ] },
      ],
    }
    ```
 
-2. **Optional:** give it its own keycap color in `styles.css`. Copy one of the existing `--nano-*` blocks and add a matching `[data-tool='tmux']` rule. Without one, it uses the default amber.
+2. **Optional:** give it its own keycap color in `styles.css`. Copy one of the existing `--nano-*` blocks and add a matching `[data-tool='kitty']` rule. Without one, it uses the default amber.
 
 3. Add the tool's name to the headline and `<title>` in `index.html`.
 

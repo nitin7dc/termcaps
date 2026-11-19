@@ -11,6 +11,7 @@
     ["a", "b"]          alternatives, shown with "or"
   `c` holds text you type or paste (config lines, shell commands). It renders as a copy button.
   `gnu: true` marks nano shortcuts that the macOS built-in pico does not have.
+  "prefix c"          tmux: press the sheet's `prefix` key (ctrl+b), let go, then c
 */
 window.SHEETS = [
   {
@@ -403,6 +404,136 @@ window.SHEETS = [
           { c: 'ghostty +edit-config', d: 'Open your config in $EDITOR' },
           { c: 'ghostty +validate-config', d: 'Check your config for mistakes' },
           { c: 'ghostty +explain-config font-size', d: 'Read the docs for one setting' },
+        ],
+      },
+    ],
+  },
+
+  {
+    id: 'tmux',
+    name: 'tmux',
+    prefix: 'ctrl+b',
+    lede: 'Sessions that keep running after you close the terminal.',
+    legend: [
+      { keys: 'ctrl+b', text: 'is the prefix. tmux waits for one more key after it.' },
+      { keys: 'prefix d', text: 'means press ctrl+b, let go, then press d.' },
+    ],
+    tips: [
+      {
+        text: 'Working on a server over SSH? Start tmux there with this. If the connection drops, your work keeps running. Log back in and run it again to pick up where you left off.',
+        cmd: 'tmux new -A -s work',
+      },
+      {
+        text: 'These are the defaults in tmux 3.4 and later. To list your own, including any you’ve added:',
+        cmd: 'tmux list-keys',
+      },
+    ],
+    sections: [
+      {
+        title: 'Start & attach',
+        note: 'Type these in your shell.',
+        rows: [
+          { c: 'tmux new -s work', d: 'Start a session named work' },
+          { c: 'tmux new -A -s work', d: 'Attach to work, or start it if it isn’t running' },
+          { c: 'tmux ls', d: 'List running sessions' },
+          { c: 'tmux a', d: 'Attach to the session you used last' },
+          { c: 'tmux a -t work', d: 'Attach to the session named work' },
+          { c: 'tmux kill-session -t work', d: 'End the session named work' },
+          { c: 'tmux kill-server', d: 'End every session', n: 'Anything still running inside them stops too.' },
+        ],
+      },
+      {
+        title: 'Detach & switch sessions',
+        rows: [
+          { k: 'prefix d', d: 'Detach, leaving everything running', n: 'Come back later with <code>tmux a</code>.' },
+          { k: 'prefix s', d: 'Pick a session from a list' },
+          { k: 'prefix ( / prefix )', d: 'Previous / next session' },
+          { k: 'prefix L', d: 'Switch to the last session you used' },
+          { k: 'prefix $', d: 'Rename the session' },
+        ],
+      },
+      {
+        title: 'Windows',
+        note: 'Like tabs. They’re listed in the green bar at the bottom.',
+        rows: [
+          { k: 'prefix c', d: 'New window' },
+          { k: 'prefix n / prefix p', d: 'Next / previous window' },
+          { k: 'prefix 0-9', d: 'Go to window 0 to 9' },
+          { k: 'prefix l', d: 'Go back to the last window you used' },
+          { k: 'prefix w', d: 'Pick a window from a list' },
+          { k: 'prefix ,', d: 'Rename the window' },
+          { k: 'prefix &', d: 'Close the window', n: 'Asks first. Press y to confirm.' },
+        ],
+      },
+      {
+        title: 'Panes',
+        note: 'Splits inside a window.',
+        rows: [
+          { k: 'prefix %', d: 'Split right' },
+          { k: 'prefix "', d: 'Split down' },
+          { k: 'prefix arrows', d: 'Go to the pane in that direction', n: 'For half a second afterwards, arrows keep moving between panes without the prefix.' },
+          { k: 'prefix o', d: 'Go to the next pane' },
+          { k: 'prefix ;', d: 'Go back to the last pane you used' },
+          { k: 'prefix z', d: 'Zoom the pane to fill the window', n: 'Press again to put it back.' },
+          { k: 'prefix ctrl+arrows', d: 'Resize the pane one cell at a time', n: 'On a Mac, Mission Control uses ⌃ with the arrows. Turn that off in System Settings → Keyboard → Keyboard Shortcuts.' },
+          { k: 'prefix alt+arrows', d: 'Resize the pane five cells at a time', n: 'On a Mac, your terminal must send Option as Alt.' },
+          { k: 'prefix space', d: 'Switch to the next layout' },
+          { k: 'prefix { / prefix }', d: 'Swap with the previous / next pane' },
+          { k: 'prefix q', d: 'Show pane numbers', n: 'Press a number while they show to jump to that pane.' },
+          { k: 'prefix !', d: 'Move the pane into its own window' },
+          { k: 'prefix x', d: 'Close the pane', n: 'Asks first. Press y to confirm.' },
+        ],
+      },
+      {
+        title: 'Scroll & copy',
+        note: 'tmux keeps its own scrollback. Copy mode lets you scroll, search and copy it. These are the default keys. If your <code>$EDITOR</code> is vi or Vim, tmux uses the vi keys in the next section instead.',
+        rows: [
+          { k: 'prefix [', d: 'Enter copy mode to scroll back' },
+          { k: 'prefix pgup', d: 'Enter copy mode and scroll up a page' },
+          { k: 'pgup / pgdn', d: 'Scroll up / down a page', n: 'The arrow keys move one line at a time.' },
+          { k: 'ctrl+r / ctrl+s', d: 'Search up / down', n: 'Press n to find the next match.' },
+          { k: 'ctrl+space', d: 'Start selecting' },
+          { k: 'alt+w', d: 'Copy the selection', n: 'This also leaves copy mode. On a Mac, your terminal must send Option as Alt.' },
+          { k: 'q', d: 'Leave copy mode' },
+          { k: 'prefix ]', d: 'Paste what you copied' },
+        ],
+      },
+      {
+        title: 'Copy mode with vi keys',
+        note: 'Used when <code>mode-keys</code> is set to vi, or your <code>$EDITOR</code> is vi or Vim. Enter copy mode with prefix [ and leave with q, as usual.',
+        rows: [
+          { k: 'h j k l', d: 'Left, down, up, right' },
+          { k: 'ctrl+u / ctrl+d', d: 'Half a page up / down' },
+          { k: 'g / G', d: 'Top / bottom of the scrollback' },
+          { k: '? / /', d: 'Search up / down' },
+          { k: 'n / N', d: 'Next / previous match' },
+          { k: 'space', d: 'Start selecting', n: 'Unlike Vim, v doesn’t start a selection unless you add it in Settings.' },
+          { k: 'V', d: 'Select whole lines' },
+          { k: 'enter', d: 'Copy the selection', n: 'This also leaves copy mode.' },
+        ],
+      },
+      {
+        title: 'Get unstuck',
+        rows: [
+          { k: 'prefix ?', d: 'List every key binding', n: 'Press q to close the list.' },
+          { k: 'prefix /', d: 'Find out what a key does', n: 'Then press the key you’re curious about.' },
+          { k: 'prefix :', d: 'Type a tmux command', n: 'For example <code>kill-pane</code> or <code>source ~/.tmux.conf</code>.' },
+          { k: 'prefix ctrl+b', d: 'Send ctrl+b to the program inside', n: 'Handy in nano and the shell, where ctrl+b moves back a character.' },
+          { k: 'prefix t', d: 'Show a big clock', n: 'Press any key to close it.' },
+        ],
+      },
+      {
+        title: 'Settings',
+        note: 'Put these lines in <code>~/.tmux.conf</code>, then run <code>tmux source ~/.tmux.conf</code> to apply them.',
+        rows: [
+          { c: 'set -g mouse on', d: 'Scroll, click and resize panes with the mouse' },
+          { c: 'set -g history-limit 50000', d: 'Keep more scrollback', n: 'The default is 2,000 lines.' },
+          { c: 'set -g base-index 1\nsetw -g pane-base-index 1', d: 'Number windows and panes from 1, to match the keyboard' },
+          { c: 'setw -g mode-keys vi', d: 'Use vi keys in copy mode' },
+          { c: 'bind -T copy-mode-vi v send -X begin-selection\nbind -T copy-mode-vi y send -X copy-pipe-and-cancel', d: 'Select with v and copy with y, like Vim' },
+          { c: 'unbind C-b\nset -g prefix C-a\nbind C-a send-prefix', d: 'Make ctrl+a the prefix, like GNU screen', n: 'Press ctrl+a twice to send a real ctrl+a, to jump to the start of a line.' },
+          { c: 'bind r source-file ~/.tmux.conf \\; display "Reloaded"', d: 'Reload this file with prefix r' },
+          { c: 'bind | split-window -h -c "#{pane_current_path}"\nbind - split-window -v -c "#{pane_current_path}"', d: 'Split with prefix | and prefix -, in the same folder' },
         ],
       },
     ],

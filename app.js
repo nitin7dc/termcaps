@@ -14,7 +14,7 @@
   const byId = Object.fromEntries(SHEETS.map((s) => [s.id, s]));
   const narrow = matchMedia('(max-width: 720px)');
 
-  const state = { tool: null, q: '', held: new Set(), hideGnu: store.get('ks-hide-gnu') === '1' };
+  const state = { tool: null, q: '', held: new Set(), pfx: false, hideGnu: store.get('ks-hide-gnu') === '1' };
   const panels = {};
   const rows = {};
   const players = {};
@@ -54,10 +54,16 @@
   });
 
   // ---------- Panels
-  const HINTS = `<p class="hints">
+  const GLYPH = { ctrl: '⌃', alt: '⌥', cmd: '⌘', shift: '⇧' };
+  const smallCaps = (spec) => {
+    const c = Keys.chords(spec)[0];
+    return [...[...c.mods].map((m) => GLYPH[m]), c.key.toUpperCase()].map((t) => `<span class="cap sm">${t}</span>`).join('');
+  };
+  const hintsHTML = (sh) => `<p class="hints">
       <span><span class="cap sm">/</span> search</span>
       <span>${SHEETS.map((s, i) => `<span class="cap sm">${i + 1}</span>`).join('')} switch tool</span>
       <span>Hold <span class="cap sm">⌃</span><span class="cap sm">⌥</span><span class="cap sm">⌘</span> or <span class="cap sm">⇧</span> to light up the shortcuts that use it</span>
+      ${sh.prefix ? `<span>Press ${smallCaps(sh.prefix)} then a key to find its shortcut</span>` : ''}
     </p>`;
 
   function tipHTML(t) {
@@ -87,6 +93,7 @@
             meta.push({
               r, gnu,
               chords: r.k ? Keys.chords(r.k) : [],
+              after: r.k ? Keys.afterPrefix(r.k) : [],
               hay: [r.d, (r.n || '').replace(/<[^>]+>/g, ''), sec.title, Keys.text(spec), nat].join(' ').toLowerCase(),
             });
             return `<li class="row${r.c ? ' stack' : ''}"${gnu ? ' data-gnu' : ''}>
@@ -128,7 +135,7 @@
         </figure>` : ''}
       </div>
       <nav class="jump" aria-label="${sh.name} sections">${sh.sections.map((s, i) => `<a href="#${sh.id}-${i}" data-jump="${sh.id}-${i}">${s.title}</a>`).join('')}</nav>
-      ${HINTS}
+      ${hintsHTML(sh)}
       <div class="sections">${sections}</div>
       <div class="empty" hidden></div>`;
     $('#panels').append(p);
@@ -172,6 +179,7 @@
     if (location.hash !== `#${id}` && !/^#\w+-\d+$/.test(location.hash)) history.replaceState(null, '', `#${id}`);
     if (opts.animate && !same && !reduced) typeWord(id);
     state.held.clear();
+    state.pfx = false;
     refresh();
     light();
   }
@@ -270,9 +278,12 @@
   function light() {
     const p = panels[state.tool];
     const held = state.held;
-    p.classList.toggle('holding', held.size > 0);
+    p.classList.toggle('holding', held.size > 0 || state.pfx);
+    p.classList.toggle('armed', state.pfx);
     rows[state.tool].forEach((r) => {
-      const lit = held.size > 0 && r.chords.some((c) => [...held].every((m) => c.mods.has(m)));
+      const lit = state.pfx
+        ? r.after.length > 0
+        : held.size > 0 && r.chords.some((c) => [...held].every((m) => c.mods.has(m)));
       r.el.classList.toggle('lit', lit);
     });
     $$('.cap.mod[data-m], .hints .cap', p).forEach((c) => {
@@ -292,8 +303,16 @@
     }[code] || '';
   }
   const keyEq = (ck, k) =>
-    ck === k || (ck === '1-8' && /^[1-8]$/.test(k)) || (ck === 'arrows' && ['left', 'right', 'up', 'down'].includes(k)) ||
-    (ck === 'backquote' && k === '`');
+    ck === k || (ck === '1-8' && /^[1-8]$/.test(k)) || (ck === '0-9' && /^[0-9]$/.test(k)) ||
+    (ck === 'arrows' && ['left', 'right', 'up', 'down'].includes(k)) || (ck === 'backquote' && k === '`');
+
+  function flash(row) {
+    row.el.classList.remove('hit');
+    void row.el.offsetWidth;
+    row.el.classList.add('hit');
+    const box = row.el.getBoundingClientRect();
+    if (box.top < 90 || box.bottom > innerHeight) row.el.scrollIntoView({ block: 'center', behavior: reduced ? 'auto' : 'smooth' });
+  }
 
   function hitKey(e) {
     const k = codeKey(e.code);
@@ -304,11 +323,38 @@
     );
     if (!hit) return;
     if (!e.metaKey) e.preventDefault();
-    hit.el.classList.remove('hit');
-    void hit.el.offsetWidth;
-    hit.el.classList.add('hit');
-    const box = hit.el.getBoundingClientRect();
-    if (box.top < 90 || box.bottom > innerHeight) hit.el.scrollIntoView({ block: 'center', behavior: reduced ? 'auto' : 'smooth' });
+    flash(hit);
+  }
+
+  // ---------- tmux-style prefix: press ctrl+b, then a key, to jump to that shortcut
+  let pfxTimer = null;
+  function setPrefix(on) {
+    state.pfx = on;
+    clearTimeout(pfxTimer);
+    if (on) pfxTimer = setTimeout(() => setPrefix(false), 3000);
+    light();
+  }
+
+  function isPrefix(e) {
+    const sh = byId[state.tool];
+    if (!sh.prefix) return false;
+    const c = Keys.chords(sh.prefix)[0];
+    return codeKey(e.code) === c.key && e.ctrlKey === c.mods.has('ctrl') && e.altKey === c.mods.has('alt') &&
+      e.metaKey === c.mods.has('cmd') && e.shiftKey === c.mods.has('shift');
+  }
+
+  const TYPED = { ' ': 'space', ArrowLeft: 'left', ArrowRight: 'right', ArrowUp: 'up', ArrowDown: 'down', PageUp: 'pgup', PageDown: 'pgdn', Enter: 'enter', Tab: 'tab' };
+  function hitAfterPrefix(e) {
+    // With ctrl or alt, match the physical key (alt+1 types ¡ on a Mac). Otherwise match the character typed, so % and " work on any layout.
+    const chorded = e.ctrlKey || e.altKey;
+    const k = chorded ? codeKey(e.code) : TYPED[e.key] || (e.key.length === 1 ? e.key : '');
+    if (!k) return;
+    const hit = rows[state.tool].find(
+      (r) => !r.el.hidden && r.after.some((c) => keyEq(c.key, k) && c.mods.has('ctrl') === e.ctrlKey && c.mods.has('alt') === e.altKey)
+    );
+    if (!hit) return;
+    e.preventDefault();
+    flash(hit);
   }
 
   document.addEventListener('keydown', (e) => {
@@ -322,6 +368,17 @@
       return;
     }
     if (inField) return;
+    if (state.pfx) {
+      if (e.repeat) return;
+      setPrefix(false);
+      if (e.key !== 'Escape') hitAfterPrefix(e);
+      return;
+    }
+    if (isPrefix(e)) {
+      e.preventDefault();
+      setPrefix(true);
+      return;
+    }
     const anyMod = e.ctrlKey || e.altKey || e.metaKey;
     if (anyMod || (e.shiftKey && state.held.size)) {
       hitKey(e);
@@ -343,7 +400,7 @@
   });
   window.addEventListener('blur', () => {
     state.held.clear();
-    light();
+    setPrefix(false);
   });
 
   // ---------- Clicks: copy, jump links, empty-state buttons, GNU toggle

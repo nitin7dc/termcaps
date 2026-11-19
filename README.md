@@ -1,6 +1,6 @@
 # TermCaps
 
-Shortcuts for nano, vi and Ghostty, drawn as keycaps you can see.
+Shortcuts for nano, vi, Ghostty and tmux, drawn as keycaps you can see.
 
 **Try it at [termcaps.com](https://termcaps.com)**
 
@@ -8,12 +8,12 @@ Shortcuts for nano, vi and Ghostty, drawn as keycaps you can see.
 
 ## What's inside
 
-- **195 shortcuts** for nano, vi/Vim and Ghostty, each drawn as real keycaps (`⌃ control`, `⌘ command`)
+- **256 shortcuts** for nano, vi/Vim, Ghostty and tmux, each drawn as real keycaps (`⌃ control`, `⌘ command`)
 - **An animated demo for each tool** that plays the essential moves and shows which keys are pressed
-- **Search** with <kbd>/</kbd>, and switch tools with <kbd>1</kbd> <kbd>2</kbd> <kbd>3</kbd>
-- **Hold <kbd>⌃</kbd> <kbd>⌥</kbd> <kbd>⌘</kbd> or <kbd>⇧</kbd>** to light up every shortcut that uses it. Press the full combo to jump to that row.
+- **Search** with <kbd>/</kbd>, and switch tools with <kbd>1</kbd> <kbd>2</kbd> <kbd>3</kbd> <kbd>4</kbd>
+- **Hold <kbd>⌃</kbd> <kbd>⌥</kbd> <kbd>⌘</kbd> or <kbd>⇧</kbd>** to light up every shortcut that uses it. Press the full combo to jump to that row. On the tmux sheet, press <kbd>⌃B</kbd> and then a key.
 - **Click any command or config line** to copy it
-- Light and dark themes. Works on phones. Printing gives you all three sheets on paper.
+- Light and dark themes. Works on phones. Printing gives you every sheet on paper.
 
 ## Run it locally
 
@@ -30,6 +30,7 @@ open index.html
 - **On recent macOS, `nano` is really pico.** Shortcuts tagged *GNU nano* need the real thing (`brew install nano`). The page has a switch to hide them.
 - **Ghostty shortcuts are the macOS defaults in Ghostty 1.4.** Run `ghostty +list-keybinds` to see your own.
 - vi on macOS opens Vim, so everything in the vi sheet works there.
+- **tmux shortcuts are the defaults in tmux 3.4 and later**, with the prefix <kbd>⌃B</kbd>. Copy mode uses emacs-style keys unless your `$EDITOR` is vi or Vim, so the sheet lists both. Run `tmux list-keys` to see your own.
 
 ## Add or fix a shortcut
 
@@ -56,6 +57,7 @@ Key format for `k`:
 | `d d` | Two separate presses |
 | `w / b` | A pair, matching a description like "Next / previous word" |
 | `f {char}` | `{name}` is a placeholder |
+| `prefix c` | tmux: press the prefix (<kbd>⌃B</kbd>), let go, then c |
 | `:wq`, `/{text}` | Anything starting with `:` `/` or `?` is a command |
 | `['a', 'b']` | Alternatives, shown with "or" |
 
@@ -65,7 +67,6 @@ Pull requests are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) for how to add
 
 ## Coming next
 
-- tmux
 - Emacs
 - Kitty and WezTerm
 

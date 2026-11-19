@@ -1,11 +1,11 @@
 name: Request a new tool
-description: Ask for a new sheet, like tmux, Emacs or Kitty
+description: Ask for a new sheet, like Emacs, Kitty or WezTerm
 body:
   - type: input
     id: tool
     attributes:
       label: Tool
-      placeholder: "tmux"
+      placeholder: "Emacs"
     validations:
       required: true
   - type: input
