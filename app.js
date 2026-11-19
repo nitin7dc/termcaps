@@ -511,8 +511,8 @@
     }
     if (typeof n !== 'number' || n < 10) return;
     const label = n >= 1000 ? `${(n / 1000).toFixed(1).replace(/\.0$/, '')}k` : String(n);
-    link.insertAdjacentHTML('beforeend', `<span class="gh-stars">★ ${label}</span>`);
-    link.setAttribute('aria-label', `TermCaps on GitHub, ${n} stars`);
+    link.insertAdjacentHTML('beforeend', `<span class="gh-stars">${label}</span>`);
+    link.setAttribute('aria-label', `Star TermCaps on GitHub, ${n} stars`);
   })();
 
   // ---------- Start

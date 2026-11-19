@@ -345,6 +345,7 @@ button.cap.cmd:hover, .cap.cmd.copied { --d: 1px; }
 }
 .gh-link:hover { border-color: var(--ink-3); }
 .gh-link svg { width: 1.2rem; height: 1.2rem; fill: var(--ink); }
+.gh-star { color: var(--accent); font-weight: inherit; }
 .gh-stars { margin-left: 0.15rem; padding-left: 0.6rem; border-left: 1px solid var(--line); color: var(--ink-2); font-variant-numeric: tabular-nums; }
 
 /* ============ Hero: tool names in giant keycaps ============ */
